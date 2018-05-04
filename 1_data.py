@@ -92,21 +92,21 @@ print(cols_names)
 # data_all.describe().to_csv('example.csv')
 
 
-# pd.plotting.scatter_matrix(data_all, diagonal='kde')
-# plt.show()
-# fig.savefig('visualize/scatter.png')
-# plt.close(fig)
+pd.plotting.scatter_matrix(data_all, diagonal='kde')
+plt.show()
+fig.savefig('visualize/scatter.png')
+plt.close(fig)
 
-for col in data_all:
-    if col == 'date_time':
-        continue
-    fig, axes = plt.subplots(1,3, figsize=(25,8))
-    print(axes)
-    data_all.boxplot(column=col, ax=axes[0])
-    data_all[col].plot(kind='kde', ax=axes[1])
-    data_all.hist(column=col, ax=axes[2])
-    fig.savefig('visualize/' + col + '.png')
-    plt.close(fig)    # close the figure
+# for col in data_all:
+#     if col == 'date_time':
+#         continue
+#     fig, axes = plt.subplots(1,3, figsize=(25,8))
+#     print(axes)
+#     data_all.boxplot(column=col, ax=axes[0])
+#     data_all[col].plot(kind='kde', ax=axes[1])
+#     data_all.hist(column=col, ax=axes[2])
+#     fig.savefig('visualize/' + col + '.png')
+#     plt.close(fig)    # close the figure
 
 
 
