@@ -77,40 +77,50 @@ except IOError as e:
     raise e
 
 func = visualize_functions()
-cols_names = data_all.columns
-
 
 # func.heatmap_corr(data_all)
 # data_all.describe().to_csv('describe_data.csv')
 
+cols_names = data_all.columns
 nandat = data_all.isnull().sum()
 
-plt.bar(cols_names, nandat, 0.25, color="blue")
-plt.xticks(rotation='vertical')
+cols_names = [x for _,x in sorted(zip(nandat,cols_names))]
+nandat = nandat.sort_values()
+
+total = data_all.shape[0]
+
+nandat = [(e/total)*100 for e in nandat]
+
+sorted = range(len(cols_names))
+
+plt.bar(sorted, nandat , color="#3F5D7D", align='edge', width=0.6)
+plt.ylabel('Percentage NaN values')
+plt.xticks(sorted, cols_names, rotation='vertical')
+
 plt.tight_layout()
 plt.savefig('visualize/nanvalues.png')
 
-
-
 plt.close()
 
-range_book = [[0,2],[3,5],[6,11],[12,20],[21,50],[50,500000000000]]
-range_book_str = ['zero to two','three to five','six to eleven','twelve to twenty','twentyone to fifty','fifty plus']
+# range_book = [[0,2],[3,5],[6,],[12,20],[21,50],[50,500000000000]]
+# range_book_str = ['zero to two','three to five','six to eleven','twelve to twenty','twentyone to fifty','fifty plus']
 
-all2 = []
-
-for ran in range_book:
-    count = data_all.loc[(data_all['srch_booking_window'] >= ran[0]) & (data_all['srch_booking_window'] <= ran[1]) & (data_all['booking_bool'] == 1)].shape[0]
-    all2.append(count)
-
-print(range_book_str)
-
-plt.bar(range(len(range_book_str)), all2, 0.25, color="blue")
-plt.xticks(range(len(range_book_str)),range_book_str)
-plt.xticks(rotation='vertical')
-plt.savefig('visualize/book_window.png')
-plt.tight_layout()
-plt.show()
+# range_book = range(0,100)
+# range_book_str = [str(e) for e in range_book]
+# all2 = []
+#
+# for ran in range_book:
+#     count = data_all.loc[(data_all['srch_booking_window'] == ran) & (data_all['booking_bool'] == 1)].shape[0]
+#     all2.append(count)
+#
+# print(range_book_str)
+#
+# plt.bar(range(len(range_book_str)), all2, 0.25, color="blue")
+# plt.xticks(range(len(range_book_str)),range_book_str)
+# plt.xticks(rotation='vertical')
+# plt.savefig('visualize/book_window.png')
+# plt.tight_layout()
+# plt.show()
 
 
 
