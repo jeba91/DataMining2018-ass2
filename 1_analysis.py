@@ -73,8 +73,6 @@ class visualize_functions:
 #Read in preprocessed data
 data_all = pd.read_pickle('preprocessed.pkl')
 
-
-
 cols_names = data_all.columns
 nandat = data_all.isnull().sum()
 
@@ -82,9 +80,7 @@ cols_names = [x for _,x in sorted(zip(nandat,cols_names))]
 nandat = nandat.sort_values()
 
 total = data_all.shape[0]
-
 nandat = [(e/total)*100 for e in nandat]
-
 sorted = range(len(cols_names))
 
 plt.bar(sorted, nandat, color = "#3F5D7D", align = 'edge', width=0.6)
@@ -93,6 +89,15 @@ plt.xticks(sorted, cols_names, rotation='vertical')
 plt.ylim(0,100)
 plt.tight_layout()
 plt.savefig('visualize/nanvalues.png')
+plt.close()
+
+cols_names = data_all.columns
+nzero = data_all.fillna(0).astype(bool).sum(axis=0)
+
+plt.bar(cols_names, nzero, color = "#3F5D7D", align = 'edge', width=0.6)
+plt.xticks(rotation='vertical')
+plt.tight_layout()
+plt.savefig('visualize/nzero.png')
 plt.close()
 
 func = visualize_functions()

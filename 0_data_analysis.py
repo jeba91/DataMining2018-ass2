@@ -78,43 +78,29 @@ except IOError as e:
 
 func = visualize_functions()
 
+##HEATMAP AND DESCRIBE
 # func.heatmap_corr(data_all)
 # data_all.describe().to_csv('describe_data.csv')
 
-
-comp_names = [['comp1_rate', 'comp1_inv', 'comp1_rate_percent_diff'], ['comp2_rate', 'comp2_inv', 'comp2_rate_percent_diff'],
-              ['comp3_rate', 'comp3_inv', 'comp3_rate_percent_diff'], ['comp4_rate', 'comp4_inv', 'comp4_rate_percent_diff'],
-              ['comp5_rate', 'comp5_inv', 'comp5_rate_percent_diff'], ['comp6_rate', 'comp6_inv', 'comp6_rate_percent_diff'],
-              ['comp7_rate', 'comp7_inv', 'comp7_rate_percent_diff'], ['comp8_rate', 'comp8_inv', 'comp8_rate_percent_diff']]
-
-for com in comp_names:
-    for c in com:
-        data_all = data_all.drop(c)
-
+#PLOT NAN VALUES
 cols_names = data_all.columns
 nandat = data_all.isnull().sum()
-
 cols_names = [x for _,x in sorted(zip(nandat,cols_names))]
 nandat = nandat.sort_values()
-
 total = data_all.shape[0]
-
 nandat = [(e/total)*100 for e in nandat]
-
 sorted = range(len(cols_names))
-
 plt.bar(sorted, nandat, color="#3F5D7D", align='edge', width=0.6)
 plt.ylabel('Percentage NaN values')
 plt.xticks(sorted, cols_names, rotation='vertical')
-
 plt.tight_layout()
 plt.savefig('visualize/nanvalues.png')
-
 plt.close()
 
+##PLOT BOOKING WINDOW VALUES
 # range_book = [[0,2],[3,5],[6,],[12,20],[21,50],[50,500000000000]]
 # range_book_str = ['zero to two','three to five','six to eleven','twelve to twenty','twentyone to fifty','fifty plus']
-
+#
 # range_book = range(0,100)
 # range_book_str = [str(e) for e in range_book]
 # all2 = []
@@ -132,8 +118,7 @@ plt.close()
 # plt.tight_layout()
 # plt.show()
 
-
-
+##PLOT BOOKED PER STAR
 # scores = np.sort(data_all.prop_review_score.unique())
 #
 # print(data_all['booking_bool'])
@@ -155,12 +140,13 @@ plt.close()
 # plt.savefig('visualize/bookedperstar.png')
 # plt.show()
 
-
+#PLOT SCATTER
 # pd.plotting.scatter_matrix(data_all, diagonal='kde')
 # plt.show()
 # fig.savefig('visualize/scatter.png')
 # plt.close(fig)
 
+#MAKE AL BOX, DENSITY AND HISTOGRAMS
 #make boxplot, density plot and histogram
 # for col in data_all:
 #     if col == 'date_time':

@@ -25,24 +25,23 @@ except IOError as e:
     print('File not found!')
     raise e
 
-# data_all = data_all.head(5000)
-
+#get column names
 cols_names = data_all.columns
 
+#competitor info
 comp_names = [['comp1_rate', 'comp1_inv', 'comp1_rate_percent_diff'], ['comp2_rate', 'comp2_inv', 'comp2_rate_percent_diff'],
               ['comp3_rate', 'comp3_inv', 'comp3_rate_percent_diff'], ['comp4_rate', 'comp4_inv', 'comp4_rate_percent_diff'],
               ['comp5_rate', 'comp5_inv', 'comp5_rate_percent_diff'], ['comp6_rate', 'comp6_inv', 'comp6_rate_percent_diff'],
               ['comp7_rate', 'comp7_inv', 'comp7_rate_percent_diff'], ['comp8_rate', 'comp8_inv', 'comp8_rate_percent_diff']]
 
+#CHEAPER AND EXPENSIVE NEW DATA
 cheaper = data_all[comp_names[0][0]]
 expensive = data_all[comp_names[0][0]]
 cheapest = data_all[comp_names[0][2]]
 cheaper.iloc[:] = 0
 expensive.iloc[:] = 0
 cheapest.iloc[:] = 0
-
 cheap_check = cheapest.values
-
 for comp in comp_names:
     conditions1 = [(data_all[comp[0]].values == -1) & (data_all[comp[1]].values == 0)]
     conditions2 = [(data_all[comp[0]].values == 1) & (data_all[comp[1]].values == 0)]
@@ -61,11 +60,16 @@ data_all['cheaper_comps'] = cheaper
 data_all['expensive_comps'] = expensive
 data_all['cheapest_comp'] = cheapest
 
+#DROP COMP VARIABLES
 for comp in comp_names:
     print(comp)
     data_all.drop(comp, axis = 1, inplace = True)
 
+
+#DROP 4 VARIABLES
 data_all.drop(['visitor_hist_adr_usd', 'visitor_hist_starrating', 'srch_query_affinity_score', 'gross_bookings_usd'], axis = 1, inplace = True)
+
+data_all = data_all.fillna(0)
 
 #save data to pickle file
 data_all.to_pickle('preprocessed.pkl')
