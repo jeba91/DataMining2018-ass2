@@ -65,11 +65,34 @@ for comp in comp_names:
     print(comp)
     data_all.drop(comp, axis = 1, inplace = True)
 
+#DROP REDUNDANT VARIABLE
+data_all.drop(['prop_starrating'])
 
-#DROP 4 VARIABLES
+#DROP 4 LARGE NAN VARIABLES
 data_all.drop(['visitor_hist_adr_usd', 'visitor_hist_starrating', 'srch_query_affinity_score', 'gross_bookings_usd'], axis = 1, inplace = True)
 
-data_all = data_all.fillna(0)
+#Create family column
+conditions = [(data_all['srch_children_count'].values == 0) & (data_all['srch_adults_count'].values == 1),
+              (data_all['srch_children_count'].values == 0) & (data_all['srch_adults_count'].values == 2),
+              (data_all['srch_children_count'].values == 0) & (data_all['srch_adults_count'].values > 2),
+              (data_all['srch_children_count'].values > 0)  & (data_all['srch_adults_count'].values == 1),
+              (data_all['srch_children_count'].values > 0)  & (data_all['srch_adults_count'].values > 1)]
+
+choices = [1,2,3,4,5]
+family_cat = np.select(conditions, choices, default=0)
+
+data_all['family_cat'] = family_cat
+
+#Create score column
+conditions = [(data_all['click_bool'].values == 1) & (data_all['booking_bool'].values == 1),
+              (data_all['click_bool'].values == 1) & (data_all['booking_bool'].values == 0)]
+choices = [5,1]
+score = np.select(conditions, choices, default=0)
+
+data_all['score'] = score
+
+#Drop score and other connecting variables
+data_all.drop(['click_bool', 'booking_bool', 'date_time', 'random_bool', 'position'], axis = 1, inplace = True)
 
 #save data to pickle file
-data_all.to_pickle('preprocessed.pkl')
+data_all.to_pickle('preprocessed1.pkl')
