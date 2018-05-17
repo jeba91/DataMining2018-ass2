@@ -28,11 +28,15 @@ from sklearn.datasets import make_friedman1
 from sklearn.feature_selection import RFECV
 from sklearn.metrics import mean_squared_error
 from sklearn.svm import SVR
-from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.svm import SVC
 import pandas as pd
 from sklearn import preprocessing
 from imblearn.under_sampling import RandomUnderSampler
+from sklearn.model_selection import cross_val_score
+from sklearn.datasets import make_blobs
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.tree import DecisionTreeClassifier
+
 
 #Read in preprocessed data
 data_all = pd.read_pickle('preprocessed2.pkl')
@@ -63,3 +67,17 @@ features_analyse = pca.fit(x_resampled)
 # print(pca.explained_variance_)
 x_train = np.concatenate((x_resampled, features), axis=1)
 y_train = y_resampled
+
+
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, Y_train, Y_test = train_test_split(x_train, y_train, test_size=0.4, random_state=42)
+
+#print X_test, X_train, Y_test, Y_train
+
+X_train, Y_train = make_blobs(n_samples=100, n_features=10, centers=3,random_state=0)
+
+clf = ExtraTreesClassifier(n_estimators=10, max_depth=None, min_samples_split=2, random_state=0)
+scores = cross_val_score(clf, X_test, Y_test)
+
+print scores.mean()
