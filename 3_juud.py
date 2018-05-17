@@ -81,4 +81,5 @@ clf = ExtraTreesClassifier(n_estimators=1000, max_depth=None, min_samples_split=
 scores = cross_val_score(clf, X_test, Y_test)
 
 print clf
+print scores
 print scores.mean()
