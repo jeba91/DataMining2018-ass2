@@ -80,6 +80,5 @@ X_train, Y_train = make_blobs(n_samples=50000, n_features=34, centers=3,random_s
 clf = ExtraTreesClassifier(n_estimators=1000, max_depth=None, min_samples_split=3, random_state=0)
 scores = cross_val_score(clf, X_test, Y_test)
 
-print clf
 print scores
 print scores.mean()
