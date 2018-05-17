@@ -60,7 +60,7 @@ plt.xlabel('number of components')
 plt.ylabel('cumulative explained variance')
 plt.savefig('visualize/PCA2.png')
 
-pca = PCA(n_components=3)
+pca = PCA(n_components=2)
 features = pca.fit_transform(x_resampled)
 features_analyse = pca.fit(x_resampled)
 
@@ -75,9 +75,10 @@ X_train, X_test, Y_train, Y_test = train_test_split(x_train, y_train, test_size=
 
 #print X_test, X_train, Y_test, Y_train
 
-X_train, Y_train = make_blobs(n_samples=100, n_features=10, centers=3,random_state=0)
+X_train, Y_train = make_blobs(n_samples=50000, n_features=34, centers=3,random_state=0)
 
-clf = ExtraTreesClassifier(n_estimators=10, max_depth=None, min_samples_split=2, random_state=0)
+clf = ExtraTreesClassifier(n_estimators=1000, max_depth=None, min_samples_split=3, random_state=0)
 scores = cross_val_score(clf, X_test, Y_test)
 
+print clf
 print scores.mean()
