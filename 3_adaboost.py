@@ -27,5 +27,4 @@ x_values = data_all.values
 x_ids = data_all.index.values
 
 clf = ExtraTreesClassifier(n_estimators=1000, max_depth=None, min_samples_split=3, random_state=0, verbose =1)
-
 clf = clf.fit(x_values, y_values)
