@@ -4,7 +4,7 @@ import random
 
 from sklearn.linear_model import LinearRegression
 from imblearn.under_sampling import RandomUnderSampler
-from NDCG_score import NDCGScore
+from NDCG_score import NDCG_Score
 
 #Read in preprocessed data
 data_all = pd.read_pickle('preprocessed3.pkl')
@@ -48,7 +48,7 @@ for i in index_test:
     scores = estimator.predict(x_test)
     predictions = [x for _,x in sorted(zip(scores,y_test), reverse=True)]
     # max_predict = sorted(y_test, reverse=True)
-    ndcg_score = ndcg_at_k(predictions,38,method=1)
+    ndcg_score = NDCG_Score.ndcg_at_k(predictions,38,method=1)
     total.append(ndcg_score)
     print(ndcg_score)
 
