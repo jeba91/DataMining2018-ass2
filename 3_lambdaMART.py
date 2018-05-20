@@ -40,13 +40,13 @@ monitor = pyltr.models.monitors.ValidationMonitor(
 model = pyltr.models.LambdaMART(
     metric=metric,
     n_estimators=1000,
-    learning_rate=0.02,
+    learning_rate=0.05,
     max_features=0.5,
-    query_subsample=0.5,
-    max_leaf_nodes=10,
+    query_subsample=0.3,
+    max_leaf_nodes=7,
     min_samples_leaf=64,
     verbose=1,)
 
 model.fit(x_values, y_values, x_ids, monitor=monitor)
 
-joblib.dump(model, 'LambdaMART.pkl')
+joblib.dump(model, 'LambdaMART2.pkl')
