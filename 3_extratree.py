@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import random
 
-from sklearn.ensemble import AdaBoostRegressor
+from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.externals import joblib
 
 def dcg_at_k(r, k, method=0):
@@ -87,7 +87,7 @@ split = int(round(0.2*len(indexes)))
 index_all = indexes[split:]
 index_test = indexes[:split]
 
-data_test = data_all.loc[index_test]
+data_test =  data_all.loc[index_test]
 data_all = data_all.loc[index_all]
 
 y_values = data_all['score'].values
@@ -96,10 +96,10 @@ columns = data_all.columns
 x_values = data_all.values
 x_ids = data_all.index.values
 
-ada = AdaBoostRegressor()
-ada.fit(x_values, y_values)
+clf = ExtraTreesRegressor()
+clf.fit(x_values, y_values)
 
-joblib.dump(ada, 'AdaBoost.pkl')
+joblib.dump(clf, 'ExtraTree.pkl')
 
 total = []
 
@@ -109,12 +109,9 @@ for i in index_test:
     y_test = data_check['score'].values
     data_check.drop(['score'], axis = 1, inplace = True)
     x_test = data_check.values
-    scores = ada.predict(x_test)
-    print(scores)
+    scores = clf.predict(x_test)
     predictions = [x for _,x in sorted(zip(scores,y_test), reverse=True)]
-
     # max_predict = sorted(y_test, reverse=True)
-    print predictions
     ndcg_score = ndcg_at_k(predictions,38,method=1)
     total.append(ndcg_score)
     print(ndcg_score)

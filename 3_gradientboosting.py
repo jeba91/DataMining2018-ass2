@@ -105,6 +105,7 @@ total = []
 
 for i in index_test:
     data_check = data_test.loc[i].copy(deep=True)
+    data_check = data_check.sort_values('score')
     y_test = data_check['score'].values
     data_check.drop(['score'], axis = 1, inplace = True)
     x_test = data_check.values
