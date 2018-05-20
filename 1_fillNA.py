@@ -24,7 +24,6 @@ data_all['prop_review_score'].fillna(mean_prop_rev,inplace=True)
 data_all['price_usd'].loc[data_all['price_usd'] > 10000] = 100000
 
 data_all['price_usd'] = (data_all['price_usd']-data_all['price_usd'].min())/(data_all['price_usd'].max()-data_all['price_usd'].min())
-data_all['prop_id'] = (data_all['prop_id']-data_all['prop_id'].min())/(data_all['prop_id'].max()-data_all['prop_id'].min())
 data_all['srch_destination_id'] = (data_all['srch_destination_id']-data_all['srch_destination_id'].min())/(data_all['srch_destination_id'].max()-data_all['srch_destination_id'].min())
 data_all['orig_destination_distance'] = (data_all['orig_destination_distance']-data_all['orig_destination_distance'].min())/(data_all['orig_destination_distance'].max()-data_all['orig_destination_distance'].min())
 
