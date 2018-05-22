@@ -57,31 +57,38 @@ class visualize_functions:
 
 
 #Read in preprocessed data
-data_all = pd.read_pickle('preprocessed.pkl')
+data_all = pd.read_pickle('preprocessed3.pkl')
 
-cols_names = data_all.columns
-nandat = data_all.isnull().sum()
+# cols_names = data_all.columns
+# nandat = data_all.isnull().sum()
+#
+# cols_names = [x for _,x in sorted(zip(nandat,cols_names))]
+# nandat = nandat.sort_values()
+#
+# total = data_all.shape[0]
+# nandat = [(e/total)*100 for e in nandat]
+# sorted = range(len(cols_names))
+#
+# plt.bar(sorted, nandat, color = "#3F5D7D", align = 'edge', width=0.6)
+# plt.ylabel('Percentage NaN values')
+# plt.xticks(sorted, cols_names, rotation='vertical')
+# plt.ylim(0,100)
+# plt.tight_layout()
+# plt.savefig('visualize/nanvalues.png')
+# plt.close()
 
-cols_names = [x for _,x in sorted(zip(nandat,cols_names))]
-nandat = nandat.sort_values()
-
+cols_names = np.asarray(data_all.columns)
+nzero = np.asarray(data_all.fillna(0).astype(bool).sum(axis=0))
+print(nzero)
+print(cols_names)
+cols_names = [x for _,x in sorted(zip(nzero,cols_names))]
+nzero = np.sort(nzero)
 total = data_all.shape[0]
-nandat = [(e/total)*100 for e in nandat]
+nzero = [(e/total)*100 for e in nzero]
 sorted = range(len(cols_names))
-
-plt.bar(sorted, nandat, color = "#3F5D7D", align = 'edge', width=0.6)
-plt.ylabel('Percentage NaN values')
+plt.bar(sorted, nzero, color = "#3F5D7D", align = 'edge', width=0.6)
 plt.xticks(sorted, cols_names, rotation='vertical')
-plt.ylim(0,100)
-plt.tight_layout()
-plt.savefig('visualize/nanvalues.png')
-plt.close()
-
-cols_names = data_all.columns
-nzero = data_all.fillna(0).astype(bool).sum(axis=0)
-
-plt.bar(cols_names, nzero, color = "#3F5D7D", align = 'edge', width=0.6)
-plt.xticks(rotation='vertical')
+plt.ylabel('Percentage non-zero values')
 plt.tight_layout()
 plt.savefig('visualize/nzero.png')
 plt.close()
