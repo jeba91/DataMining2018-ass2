@@ -12,9 +12,8 @@ indexes = np.unique(data_all.index.values)
 random.shuffle(indexes)
 
 split = int(round(0.2*len(indexes)))
-split2 = int(round(0.6*len(indexes)))
 
-index_all = indexes[split:split2]
+index_all = indexes[split:]
 index_test = indexes[:split]
 
 data_test =  data_all.loc[index_test]
@@ -22,14 +21,13 @@ data_all = data_all.loc[index_all]
 
 y_values = data_all['score'].values
 data_all.drop(['score'], axis = 1, inplace = True)
+
+data_all.drop(['site_id','prop_country_id','prop_id'], axis = 1, inplace = True)
+data_all.drop(['visitor_location_country_id','srch_destination_id'], axis = 1, inplace = True)
+
 columns = data_all.columns
 x_values = data_all.values
 x_ids = data_all.index.values
-
-
-# # Apply the random under-sampling
-# rus = RandomUnderSampler(return_indices=True)
-# x_train, y_train, idx_resampled = rus.fit_sample(x_values, y_values)
 
 metric = pyltr.metrics.NDCG(k=38)
 

@@ -17,10 +17,14 @@ from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
 from sklearn.feature_selection import RFE
 from sklearn.linear_model import LogisticRegression
+from sklearn.decomposition import PCA
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+
 
 #Load the dataset from CSV
 try:
-    data_all = pd.read_csv("training_set_VU_DM_2014.csv", index_col=0, header=0,  delimiter=",")
+    data_all = pd.read_csv("test.csv", index_col=0, header=0,  delimiter=",")
 except IOError as e:
     print('File not found!')
     raise e
@@ -69,7 +73,8 @@ for comp in comp_names:
 data_all.drop(['prop_starrating'])
 
 #DROP 4 LARGE NAN VARIABLES
-data_all.drop(['visitor_hist_adr_usd', 'visitor_hist_starrating', 'srch_query_affinity_score', 'gross_bookings_usd'], axis = 1, inplace = True)
+data_all.drop(['visitor_hist_adr_usd', 'visitor_hist_starrating', 'srch_query_affinity_score'], axis = 1, inplace = True)
+data_all.drop(['date_time', 'random_bool'], axis = 1, inplace = True)
 
 #Create family column
 conditions = [(data_all['srch_children_count'].values == 0) & (data_all['srch_adults_count'].values == 1),
@@ -83,16 +88,50 @@ family_cat = np.select(conditions, choices, default=0)
 
 data_all['family_cat'] = family_cat
 
-#Create score column
-conditions = [(data_all['click_bool'].values == 1) & (data_all['booking_bool'].values == 1),
-              (data_all['click_bool'].values == 1) & (data_all['booking_bool'].values == 0)]
-choices = [5,1]
-score = np.select(conditions, choices, default=0)
+x_train = data_all['prop_location_score1'].loc[data_all['prop_location_score2'].notnull()]
+y_train = data_all['prop_location_score2'].loc[data_all['prop_location_score2'].notnull()]
+x_test = data_all['prop_location_score1'].loc[data_all['prop_location_score2'].isnull()]
 
-data_all['score'] = score
+logreg = LinearRegression()
+logreg.fit(x_train.values.reshape(-1,1), y_train)
+y_pred = logreg.predict(x_test.values.reshape(-1,1))
 
-#Drop score and other connecting variables
-data_all.drop(['click_bool', 'booking_bool', 'date_time', 'random_bool', 'position'], axis = 1, inplace = True)
+data_all['prop_location_score2'].loc[data_all['prop_location_score2'].isnull()] = y_pred
+
+mean_dist = data_all['orig_destination_distance'].loc[data_all['orig_destination_distance'].notnull()].mean()
+data_all['orig_destination_distance'].fillna(mean_dist,inplace=True)
+
+mean_prop_rev = data_all['prop_review_score'].loc[data_all['prop_review_score'].notnull()].mean()
+data_all['prop_review_score'].fillna(mean_prop_rev,inplace=True)
+
+data_all['price_usd'].loc[data_all['price_usd'] > 10000] = 100000
+
+data_all['price_usd'] = (data_all['price_usd']-data_all['price_usd'].min())/(data_all['price_usd'].max()-data_all['price_usd'].min())
+# data_all['prop_id'] = (data_all['prop_id']-data_all['prop_id'].min())/(data_all['prop_id'].max()-data_all['prop_id'].min())
+data_all['srch_destination_id'] = (data_all['srch_destination_id']-data_all['srch_destination_id'].min())/(data_all['srch_destination_id'].max()-data_all['srch_destination_id'].min())
+data_all['orig_destination_distance'] = (data_all['orig_destination_distance']-data_all['orig_destination_distance'].min())/(data_all['orig_destination_distance'].max()-data_all['orig_destination_distance'].min())
+
+data_PCA = data_all.copy(deep=True)
+columns = data_PCA.columns
+columns = columns.append(pd.Index(['PCA1', 'PCA2']))
+
+pca_values = data_PCA.values
+
+pca = PCA().fit(pca_values)
+plt.plot(np.cumsum(pca.explained_variance_ratio_))
+plt.xlabel('number of components')
+plt.ylabel('cumulative explained variance')
+plt.savefig('visualize/PCA2.png')
+
+pca = PCA(n_components=2)
+features = pca.fit_transform(pca_values)
+features_analyse = pca.fit(pca_values)
+
+features = features.transpose()
+
+data_PCA['PCA_1'] = features[0]
+data_PCA['PCA_2'] = features[1]
+
 
 #save data to pickle file
-data_all.to_pickle('preprocessed1.pkl')
+data_PCA.to_pickle('test.pkl')

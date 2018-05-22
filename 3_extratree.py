@@ -79,10 +79,12 @@ def ndcg_at_k(r, k, method=0):
 #Read in preprocessed data
 data_all = pd.read_pickle('preprocessed3.pkl')
 
+print(data_all.columns)
+
 indexes = np.unique(data_all.index.values)
 random.shuffle(indexes)
 
-split = int(round(0.2*len(indexes)))
+split = round(0.2*len(indexes))
 
 index_all = indexes[split:]
 index_test = indexes[:split]
@@ -92,28 +94,35 @@ data_all = data_all.loc[index_all]
 
 y_values = data_all['score'].values
 data_all.drop(['score'], axis = 1, inplace = True)
+
+data_all.drop(['site_id','prop_country_id','prop_id'], axis = 1, inplace = True)
+data_all.drop(['visitor_location_country_id','srch_destination_id'], axis = 1, inplace = True)
+
 columns = data_all.columns
 x_values = data_all.values
-x_ids = data_all.index.values
+
+# Apply the random under-sampling
+rus = RandomUnderSampler(return_indices=True)
+x_train, y_train, idx_resampled = rus.fit_sample(x_values, y_values)
 
 clf = ExtraTreesRegressor()
-clf.fit(x_values, y_values)
+clf.fit(x_train, y_train)
 
 joblib.dump(clf, 'ExtraTree.pkl')
 
-total = []
-
-for i in index_test:
-    data_check = data_test.loc[i].copy(deep=True)
-    data_check = data_check.sort_values('score')
-    y_test = data_check['score'].values
-    data_check.drop(['score'], axis = 1, inplace = True)
-    x_test = data_check.values
-    scores = clf.predict(x_test)
-    predictions = [x for _,x in sorted(zip(scores,y_test), reverse=True)]
-    # max_predict = sorted(y_test, reverse=True)
-    ndcg_score = ndcg_at_k(predictions,38,method=1)
-    total.append(ndcg_score)
-    print(ndcg_score)
-
-print("NDCG is ", np.mean(total))
+# total = []
+#
+# for i in index_test:
+#     data_check = data_test.loc[i].copy(deep=True)
+#     data_check = data_check.sort_values('score')
+#     y_test = data_check['score'].values
+#     data_check.drop(['score'], axis = 1, inplace = True)
+#     x_test = data_check.values
+#     scores = clf.predict(x_test)
+#     predictions = [x for _,x in sorted(zip(scores,y_test), reverse=True)]
+#     # max_predict = sorted(y_test, reverse=True)
+#     ndcg_score = ndcg_at_k(predictions,38,method=1)
+#     total.append(ndcg_score)
+#     print(ndcg_score)
+#
+# print("NDCG is ", np.mean(total))
