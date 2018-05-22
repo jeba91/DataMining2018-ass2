@@ -99,7 +99,6 @@ data_all.drop(['score'], axis = 1, inplace = True)
 data_all.drop(['site_id','prop_country_id','prop_id'], axis = 1, inplace = True)
 data_all.drop(['visitor_location_country_id','srch_destination_id'], axis = 1, inplace = True)
 
-
 columns = data_all.columns
 x_values = data_all.values
 
@@ -107,15 +106,15 @@ x_values = data_all.values
 rus = RandomUnderSampler(return_indices=True)
 x_train, y_train, idx_resampled = rus.fit_sample(x_values, y_values)
 
-# x_resampled, y_resampled = x_values, y_values
-
 # from sklearn.svm import SVR
 # estimator = SVR()
+
 estimator = LinearRegression()
 estimator.fit(x_train,y_train)
 
 joblib.dump(estimator, 'linear.pkl')
-joblib.dump(estimator, 'SVR.pkl')
+
+# joblib.dump(estimator, 'SVR.pkl')
 
 # print(estimator)
 #
