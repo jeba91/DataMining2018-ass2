@@ -53,7 +53,7 @@ model = pyltr.models.LambdaMART(
     verbose=1,)
 
 model.fit(x_values, y_values, x_ids, monitor=monitor)
-
+# hallo
 joblib.dump(model, 'LambdaMART4.pkl')
 
 y_test = data_test['score'].values
