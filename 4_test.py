@@ -20,7 +20,11 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.externals import joblib
 
 #Read in preprocessed data
-data_all = pd.read_pickle('test.pkl')
+data_all = pd.read_pickle('test_vu.pkl')
+
+import time
+tic = time.clock()
+
 
 linear = joblib.load('AdaBoost.pkl')
 
@@ -49,3 +53,6 @@ print(data_predic)
 data_predic.drop(['predictions'], axis = 1, inplace = True)
 
 data_predic.to_csv('predictions.csv', encoding='utf-8', index=False)
+
+toc = time.clock()
+print(toc - tic)
