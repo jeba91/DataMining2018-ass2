@@ -33,12 +33,12 @@ except IOError as e:
     print('File not found!')
     raise e
 
-#Load the dataset from CSV
-try:
-    data_all = pd.read_csv("test_set_VU_DM_2014.csv", index_col=0, header=0,  delimiter=",")
-except IOError as e:
-    print('File not found!')
-    raise e
+# #Load the dataset from CSV
+# try:
+#     data_all = pd.read_csv("test_set_VU_DM_2014.csv", index_col=0, header=0,  delimiter=",")
+# except IOError as e:
+#     print('File not found!')
+#     raise e
 
 #get column names
 cols_names = data_all.columns
@@ -145,7 +145,7 @@ data_PCA['PCA_2'] = features[1]
 
 
 #save data to pickle file
-data_PCA.to_pickle('test_vu.pkl')
+data_PCA.to_pickle('test_kaggle.pkl')
 
 toc = time.clock()
 print(toc - tic)
