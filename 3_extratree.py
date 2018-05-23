@@ -109,7 +109,7 @@ rus = RandomUnderSampler(return_indices=True)
 # x_train, y_train, idx_resampled = rus.fit_sample(x_values, y_values)
 x_train, y_train = x_values, y_values
 
-clf = ExtraTreesRegressor()
+clf = ExtraTreesRegressor(n_estimators=50)
 clf.fit(x_train, y_train)
 
 joblib.dump(clf, 'ExtraTree.pkl')
