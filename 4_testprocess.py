@@ -22,9 +22,20 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 
 
+import time
+tic = time.clock()
+
+
 #Load the dataset from CSV
 try:
     data_all = pd.read_csv("test.csv", index_col=0, header=0,  delimiter=",")
+except IOError as e:
+    print('File not found!')
+    raise e
+
+#Load the dataset from CSV
+try:
+    data_all = pd.read_csv("test_set_VU_DM_2014.csv", index_col=0, header=0,  delimiter=",")
 except IOError as e:
     print('File not found!')
     raise e
@@ -134,4 +145,7 @@ data_PCA['PCA_2'] = features[1]
 
 
 #save data to pickle file
-data_PCA.to_pickle('test.pkl')
+data_PCA.to_pickle('test_vu.pkl')
+
+toc = time.clock()
+print(toc - tic)

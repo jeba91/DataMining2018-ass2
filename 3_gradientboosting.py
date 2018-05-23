@@ -5,6 +5,8 @@ import random
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.externals import joblib
 
+from imblearn.under_sampling import RandomUnderSampler
+
 def dcg_at_k(r, k, method=0):
     """Score is discounted cumulative gain (dcg)
     Relevance is positive real values.  Can use binary
@@ -76,8 +78,14 @@ def ndcg_at_k(r, k, method=0):
         return 0.
     return dcg_at_k(r, k, method) / dcg_max
 
+import time
+tic = time.clock()
+
 #Read in preprocessed data
 data_all = pd.read_pickle('preprocessed3.pkl')
+
+data_all.drop(['site_id','prop_country_id','prop_id'], axis = 1, inplace = True)
+data_all.drop(['visitor_location_country_id','srch_destination_id'], axis = 1, inplace = True)
 
 indexes = np.unique(data_all.index.values)
 random.shuffle(indexes)
@@ -93,34 +101,34 @@ data_all = data_all.loc[index_all]
 y_values = data_all['score'].values
 data_all.drop(['score'], axis = 1, inplace = True)
 
-data_all.drop(['site_id','prop_country_id','prop_id'], axis = 1, inplace = True)
-data_all.drop(['visitor_location_country_id','srch_destination_id'], axis = 1, inplace = True)
-
 columns = data_all.columns
 x_values = data_all.values
 
 # Apply the random under-sampling
 rus = RandomUnderSampler(return_indices=True)
-x_train, y_train, idx_resampled = rus.fit_sample(x_values, y_values)
+# x_train, y_train, idx_resampled = rus.fit_sample(x_values, y_values)
+x_train, y_train = x_values, y_values
 
 gbc = GradientBoostingClassifier()
 gbc.fit(x_train, y_train)
 
 joblib.dump(gbc, 'GradientBoosting.pkl')
 
-# total = []
-#
-# for i in index_test:
-#     data_check = data_test.loc[i].copy(deep=True)
-#     data_check = data_check.sort_values('score')
-#     y_test = data_check['score'].values
-#     data_check.drop(['score'], axis = 1, inplace = True)
-#     x_test = data_check.values
-#     scores = gbc.predict(x_test)
-#     predictions = [x for _,x in sorted(zip(scores,y_test), reverse=True)]
-#     # max_predict = sorted(y_test, reverse=True)
-#     ndcg_score = ndcg_at_k(predictions,38,method=1)
-#     total.append(ndcg_score)
-#     print(ndcg_score)
-#
-# print("NDCG is ", np.mean(total))
+query_id = np.asarray(data_test.index.values)
+y_test = data_test['score'].values
+data_test.drop(['score'], axis = 1, inplace = True)
+x_test = data_test.values
+
+predictions = gbc.predict(x_test)
+
+data = np.concatenate((query_id.reshape((-1, 1)),y_test.reshape((-1, 1))),axis=1 )
+data = np.concatenate((data,predictions.reshape((-1, 1))),axis=1 )
+
+data_predic = pd.DataFrame(data, columns = ['SearchId','score','predictions'])
+data_predic = data_predic.groupby(['SearchId']).apply(lambda x: x.sort_values(["predictions"], ascending = False)).reset_index(drop=True)
+
+data_new = data_predic.groupby(['SearchId']).apply(lambda x: ndcg_at_k(x['score'].values,38,1))
+
+toc = time.clock()
+print("Done in " , toc - tic ,"seconds")
+print("NDCG is ", data_new.mean())
