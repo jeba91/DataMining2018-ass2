@@ -8,8 +8,6 @@ from sklearn.externals import joblib
 #Read in preprocessed data
 data_all = pd.read_pickle('preprocessed3.pkl')
 
-print(data_all.columns)
-
 data_all.drop(['site_id','prop_country_id','prop_id'], axis = 1, inplace = True)
 data_all.drop(['visitor_location_country_id','srch_destination_id'], axis = 1, inplace = True)
 data_all.drop(['cheaper_comps','cheapest_comp','expensive_comps','PCA_1','PCA_2'], axis = 1, inplace = True)
