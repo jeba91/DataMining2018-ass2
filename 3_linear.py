@@ -84,6 +84,8 @@ tic = time.clock()
 data_train = pd.read_pickle('train.pkl')
 data_test = pd.read_pickle('test.pkl')
 
+print(data_train.columns)
+
 y_values = data_train['score'].values
 data_train.drop(['score'], axis = 1, inplace = True)
 
@@ -92,8 +94,8 @@ x_values = data_train.values
 
 # Apply the random under-sampling
 rus = RandomUnderSampler(return_indices=True)
-x_train, y_train, idx_resampled = rus.fit_sample(x_values, y_values)
-# x_train, y_train = x_values, y_values
+# x_train, y_train, idx_resampled = rus.fit_sample(x_values, y_values)
+x_train, y_train = x_values, y_values
 
 # from sklearn.svm import SVR
 # estimator = SVR()
@@ -103,21 +105,28 @@ estimator.fit(x_train,y_train)
 
 joblib.dump(estimator, 'linear.pkl')
 
+print("fitted")
+
 query_id = np.asarray(data_test.index.values)
 y_test = data_test['score'].values
 data_test.drop(['score'], axis = 1, inplace = True)
 x_test = data_test.values
-
 predictions = estimator.predict(x_test)
-
 data = np.concatenate((query_id.reshape((-1, 1)),y_test.reshape((-1, 1))),axis=1 )
 data = np.concatenate((data,predictions.reshape((-1, 1))),axis=1 )
-
 data_predic = pd.DataFrame(data, columns = ['SearchId','score','predictions'])
 data_predic = data_predic.groupby(['SearchId']).apply(lambda x: x.sort_values(["predictions"], ascending = False)).reset_index(drop=True)
-
 data_new = data_predic.groupby(['SearchId']).apply(lambda x: ndcg_at_k(x['score'].values,38,1))
+
+query_id = np.asarray(data_train.index.values)
+predictions = estimator.predict(x_train)
+data = np.concatenate((query_id.reshape((-1, 1)),y_train.reshape((-1, 1))),axis=1 )
+data = np.concatenate((data,predictions.reshape((-1, 1))),axis=1 )
+data_predic = pd.DataFrame(data, columns = ['SearchId','score','predictions'])
+data_predic = data_predic.groupby(['SearchId']).apply(lambda x: x.sort_values(["predictions"], ascending = False)).reset_index(drop=True)
+data_new2 = data_predic.groupby(['SearchId']).apply(lambda x: ndcg_at_k(x['score'].values,38,1))
 
 toc = time.clock()
 print("Done in " , toc - tic ,"seconds")
-print("NDCG is ", data_new.mean())
+print("NDCG train is ", data_new2.mean())
+print("NDCG test  is ", data_new.mean())

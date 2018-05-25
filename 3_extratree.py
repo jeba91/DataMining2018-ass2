@@ -105,17 +105,22 @@ query_id = np.asarray(data_test.index.values)
 y_test = data_test['score'].values
 data_test.drop(['score'], axis = 1, inplace = True)
 x_test = data_test.values
-
 predictions = clf.predict(x_test)
-
 data = np.concatenate((query_id.reshape((-1, 1)),y_test.reshape((-1, 1))),axis=1 )
 data = np.concatenate((data,predictions.reshape((-1, 1))),axis=1 )
-
 data_predic = pd.DataFrame(data, columns = ['SearchId','score','predictions'])
 data_predic = data_predic.groupby(['SearchId']).apply(lambda x: x.sort_values(["predictions"], ascending = False)).reset_index(drop=True)
-
 data_new = data_predic.groupby(['SearchId']).apply(lambda x: ndcg_at_k(x['score'].values,38,1))
+
+query_id = np.asarray(data_train.index.values)
+predictions = clf.predict(x_train)
+data = np.concatenate((query_id.reshape((-1, 1)),y_train.reshape((-1, 1))),axis=1 )
+data = np.concatenate((data,predictions.reshape((-1, 1))),axis=1 )
+data_predic = pd.DataFrame(data, columns = ['SearchId','score','predictions'])
+data_predic = data_predic.groupby(['SearchId']).apply(lambda x: x.sort_values(["predictions"], ascending = False)).reset_index(drop=True)
+data_new2 = data_predic.groupby(['SearchId']).apply(lambda x: ndcg_at_k(x['score'].values,38,1))
 
 toc = time.clock()
 print("Done in " , toc - tic ,"seconds")
-print("NDCG is ", data_new.mean())
+print("NDCG train is ", data_new2.mean())
+print("NDCG test  is ", data_new.mean())
