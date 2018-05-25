@@ -22,7 +22,7 @@ from sklearn.externals import joblib
 import pyltr
 
 #Read in preprocessed data
-data_all = pd.read_pickle('test.pkl')
+data_all = pd.read_pickle('test_kaggle.pkl')
 
 import time
 tic = time.clock()
