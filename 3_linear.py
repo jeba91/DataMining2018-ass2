@@ -81,32 +81,19 @@ import time
 tic = time.clock()
 
 #Read in preprocessed data
-data_all = pd.read_pickle('preprocessed3.pkl')
+data_train = pd.read_pickle('train.pkl')
+data_test = pd.read_pickle('test.pkl')
 
-data_all.drop(['site_id','prop_country_id','prop_id'], axis = 1, inplace = True)
-data_all.drop(['visitor_location_country_id','srch_destination_id'], axis = 1, inplace = True)
+y_values = data_train['score'].values
+data_train.drop(['score'], axis = 1, inplace = True)
 
-indexes = np.unique(data_all.index.values)
-random.shuffle(indexes)
-
-split = round(0.2*len(indexes))
-
-index_all = indexes[split:]
-index_test = indexes[:split]
-
-data_test =  data_all.loc[index_test]
-data_all = data_all.loc[index_all]
-
-y_values = data_all['score'].values
-data_all.drop(['score'], axis = 1, inplace = True)
-
-columns = data_all.columns
-x_values = data_all.values
+columns = data_train.columns
+x_values = data_train.values
 
 # Apply the random under-sampling
 rus = RandomUnderSampler(return_indices=True)
-# x_train, y_train, idx_resampled = rus.fit_sample(x_values, y_values)
-x_train, y_train = x_values, y_values
+x_train, y_train, idx_resampled = rus.fit_sample(x_values, y_values)
+# x_train, y_train = x_values, y_values
 
 # from sklearn.svm import SVR
 # estimator = SVR()
