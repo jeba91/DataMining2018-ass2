@@ -136,8 +136,8 @@ x_values = data_train.values
 
 # Apply the random under-sampling
 rus = RandomUnderSampler(return_indices=True)
-x_train, y_train, idx_resampled = rus.fit_sample(x_values, y_values)
-# x_train, y_train = x_values, y_values
+# x_train, y_train, idx_resampled = rus.fit_sample(x_values, y_values)
+x_train, y_train = x_values, y_values
 
 
 ada = AdaBoostRegressor(n_estimators=500)
