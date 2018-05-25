@@ -28,5 +28,11 @@ data_all['price_usd'] = (data_all['price_usd']-data_all['price_usd'].min())/(dat
 data_all['srch_destination_id'] = (data_all['srch_destination_id']-data_all['srch_destination_id'].min())/(data_all['srch_destination_id'].max()-data_all['srch_destination_id'].min())
 data_all['orig_destination_distance'] = (data_all['orig_destination_distance']-data_all['orig_destination_distance'].min())/(data_all['orig_destination_distance'].max()-data_all['orig_destination_distance'].min())
 
+#Drop variables after 
+data_all.drop(['site_id','prop_country_id','prop_id'], axis = 1, inplace = True)
+data_all.drop(['visitor_location_country_id','srch_destination_id'], axis = 1, inplace = True)
+data_all.drop(['cheaper_comps','cheapest_comp','expensive_comps','PCA_1','PCA_2'], axis = 1, inplace = True)
+data_all.drop(['srch_adults_count','srch_children_count','orig_destination_distance'], axis = 1, inplace = True)
+
 #save data to pickle file
 data_all.to_pickle('preprocessed2.pkl')

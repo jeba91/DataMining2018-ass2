@@ -25,6 +25,12 @@ from sklearn.linear_model import LinearRegression
 import time
 tic = time.clock()
 
+training set vu:
+(4958347, 53)
+test set vu:
+(4959183, 49)
+test set kaggle:
+(6622629, 49)
 
 #Load the dataset from CSV
 try:
@@ -35,7 +41,7 @@ except IOError as e:
 
 # #Load the dataset from CSV
 # try:
-#     data_all = pd.read_csv("test_set_VU_DM_2014.csv", index_col=0, header=0,  delimiter=",")
+#     data_all = pd.read_csv("training_set_VU_DM_2014.csv", index_col=0, header=0,  delimiter=",")
 # except IOError as e:
 #     print('File not found!')
 #     raise e
@@ -143,6 +149,10 @@ features = features.transpose()
 data_PCA['PCA_1'] = features[0]
 data_PCA['PCA_2'] = features[1]
 
+data_all.drop(['site_id','prop_country_id','prop_id'], axis = 1, inplace = True)
+data_all.drop(['visitor_location_country_id','srch_destination_id'], axis = 1, inplace = True)
+data_all.drop(['cheaper_comps','cheapest_comp','expensive_comps','PCA_1','PCA_2'], axis = 1, inplace = True)
+data_all.drop(['srch_adults_count','srch_children_count','orig_destination_distance'], axis = 1, inplace = True)
 
 #save data to pickle file
 data_PCA.to_pickle('test_kaggle.pkl')

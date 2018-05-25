@@ -22,7 +22,7 @@ from sklearn.externals import joblib
 import pyltr
 
 #Read in preprocessed data
-data_all = pd.read_pickle('test_kaggle.pkl')
+data_all = pd.read_pickle('test.pkl')
 
 import time
 tic = time.clock()
@@ -30,20 +30,12 @@ tic = time.clock()
 # #Read in preprocessed data
 # data_all = pd.read_pickle('preprocessed3.pkl')
 
-model = joblib.load('lambdaMART5aal.pkl')
+model = joblib.load('lambdaMART5.pkl')
 
 test_data = data_all.copy(deep=True)
 
-# y_test = data_all['score'].values
-# data_all.drop(['score'], axis = 1, inplace = True)
-
 query_id = np.asarray(test_data.index.values)
 prop_id = np.asarray(test_data['prop_id'])
-
-test_data.drop(['site_id','prop_country_id', 'prop_id'], axis = 1, inplace = True)
-test_data.drop(['visitor_location_country_id','srch_destination_id'], axis = 1, inplace = True)
-test_data.drop(['cheaper_comps','cheapest_comp','expensive_comps','PCA_1','PCA_2'], axis = 1, inplace = True)
-test_data.drop(['srch_adults_count','srch_children_count','orig_destination_distance'], axis = 1, inplace = True)
 
 test_data = test_data.values
 
@@ -68,7 +60,7 @@ print(data_predic)
 
 data_predic.drop(['predictions'], axis = 1, inplace = True)
 
-data_predic.to_csv('predictions7_aal.csv', encoding='utf-8', index=False)
+data_predic.to_csv('predictions5.csv', encoding='utf-8', index=False)
 
 toc = time.clock()
 print(toc - tic)
