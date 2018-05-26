@@ -30,12 +30,14 @@ tic = time.clock()
 # #Read in preprocessed data
 # data_all = pd.read_pickle('preprocessed3.pkl')
 
-model = joblib.load('lambdaMART5.pkl')
+model = joblib.load('lambdaMART4.pkl')
 
 test_data = data_all.copy(deep=True)
 
 query_id = np.asarray(test_data.index.values)
 prop_id = np.asarray(test_data['prop_id'])
+
+test_data.drop(['prop_id'], axis = 1, inplace = True)
 
 test_data = test_data.values
 

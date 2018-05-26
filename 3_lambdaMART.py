@@ -21,16 +21,16 @@ metric = pyltr.metrics.NDCG(k=38)
 
 # Only needed if you want to perform validation (early stopping & trimming)
 monitor = pyltr.models.monitors.ValidationMonitor(
-    x_values, y_values, x_ids, metric=metric, stop_after=1)
+    x_values, y_values, x_ids, metric=metric, stop_after=200)
 
 model = pyltr.models.LambdaMART(
     metric=metric,
-    n_estimators=1,
+    n_estimators=200,
     learning_rate=0.1,
-    max_features=0.5,
-    query_subsample=0.3,
-    max_leaf_nodes=30,
-    min_samples_leaf=64,
+    max_features=0.8,
+    query_subsample=0.2,
+    max_leaf_nodes=60,
+    min_samples_leaf=128,
     verbose=1)
 
 model.fit(x_values, y_values, x_ids, monitor=monitor)

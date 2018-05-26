@@ -132,8 +132,8 @@ plt.close()
 # fig.savefig('visualize/scatter.png')
 # plt.close(fig)
 
-#MAKE AL BOX, DENSITY AND HISTOGRAMS
-#make boxplot, density plot and histogram
+# MAKE AL BOX, DENSITY AND HISTOGRAMS
+# make boxplot, density plot and histogram
 # for col in data_all:
 #     if col == 'date_time':
 #         continue

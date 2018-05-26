@@ -25,13 +25,6 @@ from sklearn.linear_model import LinearRegression
 import time
 tic = time.clock()
 
-training set vu:
-(4958347, 53)
-test set vu:
-(4959183, 49)
-test set kaggle:
-(6622629, 49)
-
 #Load the dataset from CSV
 try:
     data_all = pd.read_csv("test.csv", index_col=0, header=0,  delimiter=",")
@@ -149,10 +142,18 @@ features = features.transpose()
 data_PCA['PCA_1'] = features[0]
 data_PCA['PCA_2'] = features[1]
 
-data_all.drop(['site_id','prop_country_id','prop_id'], axis = 1, inplace = True)
-data_all.drop(['visitor_location_country_id','srch_destination_id'], axis = 1, inplace = True)
-data_all.drop(['cheaper_comps','cheapest_comp','expensive_comps','PCA_1','PCA_2'], axis = 1, inplace = True)
-data_all.drop(['srch_adults_count','srch_children_count','orig_destination_distance'], axis = 1, inplace = True)
+data_PCA.drop(['site_id','prop_country_id'], axis = 1, inplace = True)
+data_PCA.drop(['visitor_location_country_id','srch_destination_id'], axis = 1, inplace = True)
+data_PCA.drop(['cheaper_comps','cheapest_comp','expensive_comps','PCA_1','PCA_2'], axis = 1, inplace = True)
+data_PCA.drop(['srch_adults_count','srch_children_count','orig_destination_distance'], axis = 1, inplace = True)
+
+data_all['prop_hist_price'] = data_all['prop_log_historical_price'].apply(lambda x: 2**x)
+data_all['prop_hist_price'].loc[data_all['prop_hist_price'] == 1] = data_all['price_usd'].loc[data_all['prop_hist_price'] == 1]
+data_all['diff_price'] = data_all['prop_hist_price'] - data_all['price_usd']
+data_all.drop(['prop_hist_price'], axis = 1, inplace = True)
+
+data_all = data_all.sort_index()
+data_all['price_rank'] = data_all.groupby(data_all.index)['price_usd'].rank(ascending=False)
 
 #save data to pickle file
 data_PCA.to_pickle('test_kaggle.pkl')
